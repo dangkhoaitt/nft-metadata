@@ -31,20 +31,20 @@ const config = {
       gasPrice: 8000000000,
     },
     // Polygon test network config for deploying
-    matic: {
-      url: process.env.MATIC_URL,
-      accounts: [process.env.PRIVATE_KEY_MATIC],
+    mumbai: {
+      url: process.env.MUMBAI_URL,
+      accounts: [process.env.PRIVATE_KEY_MUMBAI],
     },
   },
   // Verify and public source code on etherscan
-  // etherscan: {
-  //   // etherscan
-  //   apiKey: `${process.env.ETHERSCAN_API_KEY}`
-  // },
   etherscan: {
-    // polygonscan
-    apiKey: process.env.POLYGONSCAN_API_KEY,
+    // etherscan
+    apiKey: `${process.env.ETHERSCAN_API_KEY}`
   },
+  // etherscan: {
+  //   // polygonscan
+  //   apiKey: process.env.POLYGONSCAN_API_KEY,
+  // },
   solidity: {
     compilers: [
       {
@@ -56,6 +56,15 @@ const config = {
           },
         },
       },
+      {
+        version: "0.6.6",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      }
     ],
   },
   paths: {

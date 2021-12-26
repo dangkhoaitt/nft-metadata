@@ -4,10 +4,11 @@
   "main": "hardhat.config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy-matic": "npx hardhat run scripts/deploy.js --network matic",
+    "deploy-mumbai": "npx hardhat run scripts/deploy.js --network mumbai",
     "deploy-rinkeby": "npx hardhat run scripts/deploy.js --network rinkeby"
   },
   "dependencies": {
+    "@chainlink/contracts": "^0.3.0",
     "@nomiclabs/hardhat-ethers": "2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.8",
     "@nomiclabs/hardhat-solhint": "2.0.0",
