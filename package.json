@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy-mumbai": "npx hardhat run scripts/deploy.js --network mumbai",
-    "deploy-rinkeby": "npx hardhat run scripts/deploy.js --network rinkeby"
+    "deploy-rinkeby": "npx hardhat run scripts/deploy.js --network rinkeby",
+    "compile": "npx hardhat compile"
   },
   "dependencies": {
     "@chainlink/contracts": "^0.3.0",

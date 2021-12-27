@@ -29,11 +29,11 @@ describe("MemberCard", () => {
       expect(name).to.equal("Member Card NFT");
     });
 
-    it("Check Token URI", async () => {
+    it.only("Check Token URI", async () => {
       await memberCard.connect(admin).setTokenExpiry(1);
       await memberCard.connect(admin).setTokenExpiry(2);
-      await memberCard.connect(user1).mintToken(user1.address, { value: FEE });
-      await memberCard.connect(user2).mintToken(user2.address, { value: FEE });
+      await memberCard.connect(user1).mintToken(user1.address, "Member God", 0905123456, "david@gmail.com", { value: FEE });
+      await memberCard.connect(user2).mintToken(user2.address, "Member Sliver", 0932888888, "chillies@sound.com", { value: FEE });
 
       let uri1 = await memberCard.tokenURI(1);
       let uri2 = await memberCard.tokenURI(2);
