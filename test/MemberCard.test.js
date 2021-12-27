@@ -251,16 +251,14 @@ describe("MemberCard", () => {
     beforeEach(async () => {
       await memberCard.connect(admin).setTokenExpiry(1);
       await memberCard.connect(admin).setTokenExpiry(2);
-      await memberCard.connect(user1).mintToken(user1.address, "Member God", { value: FEE });
+      await memberCard.connect(user1).mintToken(user1.address, "Member Gold", { value: FEE });
       await memberCard.connect(user2).mintToken(user2.address, "Member Sliver", { value: FEE });
       await memberCard.connect(user3).mintToken(user3.address, "Member Platinum", { value: FEE });
       await memberCard.connect(user4).mintToken(user4.address, "Member Diamond", { value: FEE });
     })
 
-    it("", async() => {
+    it("Generate Metadata", async() => {
       const memberCards = (await memberCard.connect(user1).getNumberOfMemberCards()).toString();
-      console.log('memberCards :>> ', memberCards);
-
       index = 0
       while (index < memberCards) {
         console.log('Let\'s get the overview of your memberCard ' + index + ' of ' + memberCards)
@@ -277,11 +275,13 @@ describe("MemberCard", () => {
         let data = JSON.stringify(memberCardMetadata)
         fs.writeFileSync(filename + '.json', data)
       }
+    })
 
-      let uri1 = await memberCard.tokenURI(1);
-      let uri2 = await memberCard.tokenURI(2);
-      expect(uri1).to.equal("");
-      expect(uri2).to.equal("");
+    it("Set TokenURI", async() => {
+      const tx1 = await memberCard.connect(user1).setTokenURI(1, "https://ipfs.io/ipfs/QmRP8idwGTB53yg76Czqa6EEReQ8e38vPNPfjPTupadkRP?filename=member-gold.json")
+      const tx2 = await memberCard.connect(user2).setTokenURI(2, "https://ipfs.io/ipfs/QmXd61Wuj4mhNKHtdKgseZkcTzaTSSbBxYN5F7aaFEpCqx?filename=member-sliver.json")
+      const tx3 = await memberCard.connect(user3).setTokenURI(3, "https://ipfs.io/ipfs/QmVob6MAQFdMJ5dCyFuWSoEZcKzLFg92h2oQ6v7qQH5jRS?filename=member-platinum.json")
+      const tx4 = await memberCard.connect(user4).setTokenURI(4, "https://ipfs.io/ipfs/QmZVNNuAQ47sGJeiqWUKxC38YTwEQ5g618YHeu8URrmdeW?filename=member-diamond.json")
     })
   });
 
