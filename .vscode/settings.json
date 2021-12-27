@@ -8,12 +8,13 @@
     },
     {
       "match": ".*\\Dnd.test.js$",
-      "command": "npx hardhat test test/Dnd.test.js",
+      "command": "npx hardhat compile",
       "runIn": "terminal",
     },
     {
       "match": ".*\\MemberCard.sol$",
-      "command": "npx hardhat test test/MemberCard.test.js",
+      // "command": "npx hardhat test test/MemberCard.test.js",
+      "command": "npx hardhat compile",
       "runIn": "terminal",
     },
     {

@@ -1,12 +1,13 @@
-//SPDX-License-Identifier: Unlicense
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.4;
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract MemberCard is ERC721Enumerable, Ownable, Pausable {
+contract MemberCard is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable, Pausable {
     struct UseTokenInfo {
         address vendor;
         address owner;
@@ -14,9 +15,6 @@ contract MemberCard is ERC721Enumerable, Ownable, Pausable {
     }
 
     struct MemberCard {
-        // uint256 expires;
-        uint256 phone;
-        string email;
         string name;
     }
 
@@ -37,6 +35,41 @@ contract MemberCard is ERC721Enumerable, Ownable, Pausable {
     event SetExpiryDate(uint256 indexed value);
     event SetAvailCount(uint256 indexed value);
     event SetAvailCountFor(uint256 indexed tokenId, uint256 indexed value);
+
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+        super._burn(tokenId);
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
+    function safeMint(address to, uint256 tokenId) public onlyOwner {
+        _safeMint(to, tokenId);
+    }
+
+    //=====================================================================
 
     modifier validCount(uint256 tokenId) {
         require(getAvailCount(tokenId) > 0, "Out of use");
@@ -88,11 +121,11 @@ contract MemberCard is ERC721Enumerable, Ownable, Pausable {
         _transfer(from, to, tokenId);
     }
 
-    function mintToken(address to, string memory name, uint256 phone, string memory email) external payable {
+    function mintToken(address to, string memory name) external payable {
         require(balanceOf(to) == 0, "Only have 1 NFT per wallet");
         require(msg.value >= fee, "Invalid value");
 
-        memberCards.push(MemberCard(phone, email, name));
+        memberCards.push(MemberCard(name));
 
         _safeMint(to, ++currentTokenId);
 
