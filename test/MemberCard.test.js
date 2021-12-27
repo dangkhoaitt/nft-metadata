@@ -1,6 +1,9 @@
 const { ethers } = require("hardhat");
 const { expect } = require("chai");
 const { skipTime } = require("./utils");
+const { memberCardTemplate } = require("../metadata/template/MemberCardTemplate");
+const fs = require('fs');
+
 
 const THREE_MONTHS = 7776000; // seconds
 const FEE = "50000000000000000";
@@ -12,6 +15,7 @@ describe("MemberCard", () => {
     user1 = accounts[1];
     user2 = accounts[2];
     user3 = accounts[3];
+    user4 = accounts[4];
 
     MemberCard = await ethers.getContractFactory("MemberCard");
     Vendor     = await ethers.getContractFactory("Vendor");
@@ -29,11 +33,11 @@ describe("MemberCard", () => {
       expect(name).to.equal("Member Card NFT");
     });
 
-    it.only("Check Token URI", async () => {
+    it("Check Token URI", async () => {
       await memberCard.connect(admin).setTokenExpiry(1);
       await memberCard.connect(admin).setTokenExpiry(2);
-      await memberCard.connect(user1).mintToken(user1.address, "Member God", 0905123456, "david@gmail.com", { value: FEE });
-      await memberCard.connect(user2).mintToken(user2.address, "Member Sliver", 0932888888, "chillies@sound.com", { value: FEE });
+      await memberCard.connect(user1).mintToken(user1.address, "Member God", { value: FEE });
+      await memberCard.connect(user2).mintToken(user2.address, "Member Sliver", { value: FEE });
 
       let uri1 = await memberCard.tokenURI(1);
       let uri2 = await memberCard.tokenURI(2);
@@ -241,6 +245,44 @@ describe("MemberCard", () => {
     });
 
 
+  });
+
+  describe.only("Deployment 4 : Add Metadata", () => {
+    beforeEach(async () => {
+      await memberCard.connect(admin).setTokenExpiry(1);
+      await memberCard.connect(admin).setTokenExpiry(2);
+      await memberCard.connect(user1).mintToken(user1.address, "Member God", { value: FEE });
+      await memberCard.connect(user2).mintToken(user2.address, "Member Sliver", { value: FEE });
+      await memberCard.connect(user3).mintToken(user3.address, "Member Platinum", { value: FEE });
+      await memberCard.connect(user4).mintToken(user4.address, "Member Diamond", { value: FEE });
+    })
+
+    it("", async() => {
+      const memberCards = (await memberCard.connect(user1).getNumberOfMemberCards()).toString();
+      console.log('memberCards :>> ', memberCards);
+
+      index = 0
+      while (index < memberCards) {
+        console.log('Let\'s get the overview of your memberCard ' + index + ' of ' + memberCards)
+        let memberCardMetadata = memberCardTemplate;
+        let memberCardOverview = await memberCard.memberCards(index);
+        index++
+        memberCardMetadata['name'] = memberCardOverview
+        if (fs.existsSync('metadata/' + memberCardMetadata['name'].toLowerCase().replace(/\s/g, '-') + '.json')) {
+            console.log('test')
+            continue
+        }
+        console.log(memberCardMetadata['name'])
+        filename = 'metadata/' + memberCardMetadata['name'].toLowerCase().replace(/\s/g, '-')
+        let data = JSON.stringify(memberCardMetadata)
+        fs.writeFileSync(filename + '.json', data)
+      }
+
+      let uri1 = await memberCard.tokenURI(1);
+      let uri2 = await memberCard.tokenURI(2);
+      expect(uri1).to.equal("");
+      expect(uri2).to.equal("");
+    })
   });
 
   describe("setPause", () => {
