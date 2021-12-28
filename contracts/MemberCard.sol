@@ -211,4 +211,8 @@ contract MemberCard is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable, Paus
         );
         _setTokenURI(tokenId, _tokenURI);
     }
+
+    function getTokenURI(uint256 tokenId) public view returns (string memory) {
+        return tokenURI(tokenId);
+    }
 }
