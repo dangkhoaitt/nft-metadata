@@ -23,44 +23,45 @@ async function main() {
   
   const memberCard = await MemberCard.deploy("Member Card NFT", "MCN", 3, THREE_MONTHS);
   await memberCard.deployed();
+  console.log("MemberCard  deployed to ==> ", memberCard.address);
 
   // get ra các character
   // console.log('Let\'s get the overview of your character');
   // const overview = await dnd.characters(0);
   // console.log(overview);
 
+  // Mint token
+  await memberCard.mintToken()
+
   // Tạo metadata
-  const length = await memberCard.getNumberOfMemberCards();
+  const memberCardLength = (await memberCard.getNumberOfMemberCards()).toString();
   let index = 0;
-  while (index < length) {
-    console.log('Let\'s get the overview of your MemberCard ' + index + ' of ' + length);
+  while (index < memberCardLength) {
+    console.log('Let\'s get the overview of your MemberCard ' + index + ' of ' + memberCardLength);
     let memberCardMetadata = memberCardTemplate;
     let memberCardOverview = await memberCard.memberCards(index);
     index += 1;
-    memberCardMetadata['name'] = memberCardOverview['name'];
+    memberCardMetadata['name'] = memberCardOverview;
     if (fs.existsSync('metadata/' + memberCardMetadata['name'].toLowerCase().replace(/\s/g, '-') + '.json')) {
       console.log('test')
       continue
     }
     console.log(memberCardMetadata['name'])
-    memberCardMetadata['phone'] = memberCardOverview['phone']
-    memberCardMetadata['email'] = memberCardOverview['email']
-  }
-
     filename = 'metadata/' + characterMetadata['name'].toLowerCase().replace(/\s/g, '-')
     let data = JSON.stringify(characterMetadata)
     fs.writeFileSync(filename + '.json', data)
-
+  }
+  // 0x0B592f7bb85E4f516019eeeb372414Ca16F83535
+  
   // set tokenUri
-  const TOKENID = 0;
   console.log('Let\'s set the tokenURI of your MemberCard')
-  const tx  = await memberCard.setTokenURI(0, "")
+  const tx  = await memberCard.setTokenURI(0, "https://ipfs.io/ipfs/QmRP8idwGTB53yg76Czqa6EEReQ8e38vPNPfjPTupadkRP?filename=member-gold.json")
   console.log('tx :>> ', tx);
-  const tx1 = await memberCard.setTokenURI(1, "")
+  const tx1 = await memberCard.setTokenURI(1, "https://ipfs.io/ipfs/QmXd61Wuj4mhNKHtdKgseZkcTzaTSSbBxYN5F7aaFEpCqx?filename=member-sliver.json")
   console.log('tx1 :>> ', tx1);
-  const tx2 = await memberCard.setTokenURI(2, "")
+  const tx2 = await memberCard.setTokenURI(2, "https://ipfs.io/ipfs/QmVob6MAQFdMJ5dCyFuWSoEZcKzLFg92h2oQ6v7qQH5jRS?filename=member-platinum.json")
   console.log('tx2 :>> ', tx2);
-  const tx3 = await memberCard.setTokenURI(3, "")
+  const tx3 = await memberCard.setTokenURI(3, "https://ipfs.io/ipfs/QmZVNNuAQ47sGJeiqWUKxC38YTwEQ5g618YHeu8URrmdeW?filename=member-diamond.json")
   console.log('tx3 :>> ', tx3);
   }
 

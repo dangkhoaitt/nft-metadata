@@ -282,7 +282,16 @@ describe("MemberCard", () => {
       const tx2 = await memberCard.connect(user2).setTokenURI(2, "https://ipfs.io/ipfs/QmXd61Wuj4mhNKHtdKgseZkcTzaTSSbBxYN5F7aaFEpCqx?filename=member-sliver.json")
       const tx3 = await memberCard.connect(user3).setTokenURI(3, "https://ipfs.io/ipfs/QmVob6MAQFdMJ5dCyFuWSoEZcKzLFg92h2oQ6v7qQH5jRS?filename=member-platinum.json")
       const tx4 = await memberCard.connect(user4).setTokenURI(4, "https://ipfs.io/ipfs/QmZVNNuAQ47sGJeiqWUKxC38YTwEQ5g618YHeu8URrmdeW?filename=member-diamond.json")
+
+      const uri1 = await memberCard.connect(user1).getTokenURI(1);
+      console.log('uri1 :>> ', uri1);
     })
+
+    // it("Get TokenURI", async () => {
+    //   const uri1 = await memberCard.connect(user1).getTokenURI(1);
+    //   console.log('uri1 :>> ', uri1);
+    // })
+
   });
 
   describe("setPause", () => {
