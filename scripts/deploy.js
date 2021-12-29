@@ -3,13 +3,14 @@ const fs = require("fs");
 const { memberCardTemplate } = require("../metadata/template/MemberCardTemplate");
 require('dotenv').config();
 const THREE_MONTHS = 7776000; // seconds
+const FEE = "50000000000000000";
 const env = process.env;
 
 async function main() {
   //Loading accounts
   const accounts = await ethers.getSigners();
-  const addresses = accounts.map((item) => item.address);
-
+  const addresses = accounts.map((item) => item.address.toString());
+  
   // Loading contract factory.
   // const TokenTest  = await ethers.getContractFactory("TokenTest");
   const MemberCard = await ethers.getContractFactory("MemberCard");
@@ -31,7 +32,7 @@ async function main() {
   // console.log(overview);
 
   // Mint token
-  await memberCard.mintToken()
+  await memberCard.mintToken(addresses[0], { value: FEE });
 
   // Tạo metadata
   const memberCardLength = (await memberCard.getNumberOfMemberCards()).toString();
@@ -56,13 +57,9 @@ async function main() {
   // set tokenUri
   console.log('Let\'s set the tokenURI of your MemberCard')
   const tx  = await memberCard.setTokenURI(0, "https://ipfs.io/ipfs/QmRP8idwGTB53yg76Czqa6EEReQ8e38vPNPfjPTupadkRP?filename=member-gold.json")
-  console.log('tx :>> ', tx);
-  const tx1 = await memberCard.setTokenURI(1, "https://ipfs.io/ipfs/QmXd61Wuj4mhNKHtdKgseZkcTzaTSSbBxYN5F7aaFEpCqx?filename=member-sliver.json")
-  console.log('tx1 :>> ', tx1);
-  const tx2 = await memberCard.setTokenURI(2, "https://ipfs.io/ipfs/QmVob6MAQFdMJ5dCyFuWSoEZcKzLFg92h2oQ6v7qQH5jRS?filename=member-platinum.json")
-  console.log('tx2 :>> ', tx2);
-  const tx3 = await memberCard.setTokenURI(3, "https://ipfs.io/ipfs/QmZVNNuAQ47sGJeiqWUKxC38YTwEQ5g618YHeu8URrmdeW?filename=member-diamond.json")
-  console.log('tx3 :>> ', tx3);
+  // const tx1 = await memberCard.setTokenURI(1, "https://ipfs.io/ipfs/QmXd61Wuj4mhNKHtdKgseZkcTzaTSSbBxYN5F7aaFEpCqx?filename=member-sliver.json")
+  // const tx2 = await memberCard.setTokenURI(2, "https://ipfs.io/ipfs/QmVob6MAQFdMJ5dCyFuWSoEZcKzLFg92h2oQ6v7qQH5jRS?filename=member-platinum.json")
+  // const tx3 = await memberCard.setTokenURI(3, "https://ipfs.io/ipfs/QmZVNNuAQ47sGJeiqWUKxC38YTwEQ5g618YHeu8URrmdeW?filename=member-diamond.json")
   }
 
   // const vendor = await Vendor.deploy(deployedMemberCard.contractAddress);
