@@ -35,28 +35,29 @@ async function main() {
   await memberCard.mintToken(addresses[0], { value: FEE });
 
   // Tạo metadata
-  const memberCardLength = (await memberCard.getNumberOfMemberCards()).toString();
-  let index = 0;
-  while (index < memberCardLength) {
-    console.log('Let\'s get the overview of your MemberCard ' + index + ' of ' + memberCardLength);
-    let memberCardMetadata = memberCardTemplate;
-    let memberCardOverview = await memberCard.memberCards(index);
-    index += 1;
-    memberCardMetadata['name'] = memberCardOverview;
-    if (fs.existsSync('metadata/' + memberCardMetadata['name'].toLowerCase().replace(/\s/g, '-') + '.json')) {
-      console.log('test')
-      continue
-    }
-    console.log(memberCardMetadata['name'])
-    filename = 'metadata/' + characterMetadata['name'].toLowerCase().replace(/\s/g, '-')
-    let data = JSON.stringify(characterMetadata)
-    fs.writeFileSync(filename + '.json', data)
-  }
+  // const memberCardLength = (await memberCard.getNumberOfMemberCards()).toString();
+  // let index = 0;
+  // while (index < memberCardLength) {
+  //   console.log('Let\'s get the overview of your MemberCard ' + index + ' of ' + memberCardLength);
+  //   let memberCardMetadata = memberCardTemplate;
+  //   let memberCardOverview = await memberCard.memberCards(index);
+  //   index += 1;
+  //   memberCardMetadata['name'] = memberCardOverview;
+  //   if (fs.existsSync('metadata/' + memberCardMetadata['name'].toLowerCase().replace(/\s/g, '-') + '.json')) {
+  //     console.log('test')
+  //     continue
+  //   }
+  //   console.log(memberCardMetadata['name'])
+  //   filename = 'metadata/' + characterMetadata['name'].toLowerCase().replace(/\s/g, '-')
+  //   let data = JSON.stringify(characterMetadata)
+  //   fs.writeFileSync(filename + '.json', data)
+  // }
   // 0x0B592f7bb85E4f516019eeeb372414Ca16F83535
+  // 0xdE20a2B89387EB22364FaEAeA3774CB4B5F0a00c
   
   // set tokenUri
   console.log('Let\'s set the tokenURI of your MemberCard')
-  const tx  = await memberCard.setTokenURI(0, "https://ipfs.io/ipfs/QmRP8idwGTB53yg76Czqa6EEReQ8e38vPNPfjPTupadkRP?filename=member-gold.json")
+  // const tx  = await memberCard.setTokenURI(0, "https://ipfs.io/ipfs/QmTxYCTADGbWBw1oByLC4aDpQoKS6zDtSq2WmoLkCeRZtb?filename=member-kv3d.json")
   // const tx1 = await memberCard.setTokenURI(1, "https://ipfs.io/ipfs/QmXd61Wuj4mhNKHtdKgseZkcTzaTSSbBxYN5F7aaFEpCqx?filename=member-sliver.json")
   // const tx2 = await memberCard.setTokenURI(2, "https://ipfs.io/ipfs/QmVob6MAQFdMJ5dCyFuWSoEZcKzLFg92h2oQ6v7qQH5jRS?filename=member-platinum.json")
   // const tx3 = await memberCard.setTokenURI(3, "https://ipfs.io/ipfs/QmZVNNuAQ47sGJeiqWUKxC38YTwEQ5g618YHeu8URrmdeW?filename=member-diamond.json")

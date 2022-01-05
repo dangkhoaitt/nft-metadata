@@ -122,7 +122,7 @@ contract MemberCard is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable, Paus
     }
 
     function mintToken(address to, string memory name) external payable {
-        require(balanceOf(to) == 0, "Only have 1 NFT per wallet");
+        // require(balanceOf(to) == 0, "Only have 1 NFT per wallet");
         require(msg.value >= fee, "Invalid value");
 
         memberCards.push(MemberCard(name));
@@ -205,10 +205,10 @@ contract MemberCard is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable, Paus
     }
 
     function setTokenURI(uint256 tokenId, string memory _tokenURI) public {
-        require(
-            _isApprovedOrOwner(_msgSender(), tokenId),
-            "ERC721: transfer caller is not owner nor approved"
-        );
+        // require(
+        //     _isApprovedOrOwner(_msgSender(), tokenId),
+        //     "ERC721: transfer caller is not owner nor approved"
+        // );
         _setTokenURI(tokenId, _tokenURI);
     }
 
