@@ -2,20 +2,23 @@
   "runOnSave.statusMessageTimeout": 3000,
   "runOnSave.commands": [
     {
-      "match": ".*\\.test.js$",
-      // "command": "npx hardhat test test/MemberCard.test.js",
-      "command": "npx hardhat test test/Dnd.test.js",
+      "match": ".*\\MemberCard.test.js$",
+      "command": "npx hardhat test test/MemberCard.test.js",
       "runIn": "terminal",
     },
-    // {
-    //   "match": ".*\\.test.js$",
-    //   // "command": "npx hardhat test test/MemberCard.test.js",
-    //   "command": "npx hardhat test test/MemberCard.test.js",
-    //   "runIn": "terminal",
-    // },
     {
-      "match": ".*\\.sol$",
+      "match": ".*\\Dnd.test.js$",
+      "command": "npx hardhat compile",
+      "runIn": "terminal",
+    },
+    {
+      "match": ".*\\MemberCard.sol$",
       // "command": "npx hardhat test test/MemberCard.test.js",
+      "command": "npx hardhat compile",
+      "runIn": "terminal",
+    },
+    {
+      "match": ".*\\DungeonsAndDragonsCharacter.sol$",
       "command": "npx hardhat test test/Dnd.test.js",
       "runIn": "terminal",
     },

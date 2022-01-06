@@ -1,6 +1,9 @@
 const { ethers } = require("hardhat");
 const { expect } = require("chai");
 const { skipTime } = require("./utils");
+const { memberCardTemplate } = require("../metadata/template/MemberCardTemplate");
+const fs = require('fs');
+
 
 const THREE_MONTHS = 7776000; // seconds
 const FEE = "50000000000000000";
@@ -12,6 +15,7 @@ describe("MemberCard", () => {
     user1 = accounts[1];
     user2 = accounts[2];
     user3 = accounts[3];
+    user4 = accounts[4];
 
     MemberCard = await ethers.getContractFactory("MemberCard");
     Vendor     = await ethers.getContractFactory("Vendor");
@@ -32,8 +36,8 @@ describe("MemberCard", () => {
     it("Check Token URI", async () => {
       await memberCard.connect(admin).setTokenExpiry(1);
       await memberCard.connect(admin).setTokenExpiry(2);
-      await memberCard.connect(user1).mintToken(user1.address, { value: FEE });
-      await memberCard.connect(user2).mintToken(user2.address, { value: FEE });
+      await memberCard.connect(user1).mintToken(user1.address, "Member God", { value: FEE });
+      await memberCard.connect(user2).mintToken(user2.address, "Member Sliver", { value: FEE });
 
       let uri1 = await memberCard.tokenURI(1);
       let uri2 = await memberCard.tokenURI(2);
@@ -240,6 +244,53 @@ describe("MemberCard", () => {
       expect(await memberCard.getAvailCount(3)).to.equal(2);
     });
 
+
+  });
+
+  describe.only("Deployment 4 : Add Metadata", () => {
+    beforeEach(async () => {
+      await memberCard.connect(admin).setTokenExpiry(1);
+      await memberCard.connect(admin).setTokenExpiry(2);
+      await memberCard.connect(user1).mintToken(user1.address, "Member Gold", { value: FEE });
+      await memberCard.connect(user2).mintToken(user2.address, "Member Sliver", { value: FEE });
+      await memberCard.connect(user3).mintToken(user3.address, "Member Platinum", { value: FEE });
+      await memberCard.connect(user4).mintToken(user4.address, "Member Diamond", { value: FEE });
+    })
+
+    it("Generate Metadata", async() => {
+      const memberCards = (await memberCard.connect(user1).getNumberOfMemberCards()).toString();
+      index = 0
+      while (index < memberCards) {
+        console.log('Let\'s get the overview of your memberCard ' + index + ' of ' + memberCards)
+        let memberCardMetadata = memberCardTemplate;
+        let memberCardOverview = await memberCard.memberCards(index);
+        index++
+        memberCardMetadata['name'] = memberCardOverview
+        if (fs.existsSync('metadata/' + memberCardMetadata['name'].toLowerCase().replace(/\s/g, '-') + '.json')) {
+            console.log('test')
+            continue
+        }
+        console.log(memberCardMetadata['name'])
+        filename = 'metadata/' + memberCardMetadata['name'].toLowerCase().replace(/\s/g, '-')
+        let data = JSON.stringify(memberCardMetadata)
+        fs.writeFileSync(filename + '.json', data)
+      }
+    })
+
+    it("Set TokenURI", async() => {
+      await memberCard.connect(user1).setTokenURI(1, "https://ipfs.io/ipfs/QmRP8idwGTB53yg76Czqa6EEReQ8e38vPNPfjPTupadkRP?filename=member-gold.json")
+      await memberCard.connect(user2).setTokenURI(2, "https://ipfs.io/ipfs/QmXd61Wuj4mhNKHtdKgseZkcTzaTSSbBxYN5F7aaFEpCqx?filename=member-sliver.json")
+      await memberCard.connect(user3).setTokenURI(3, "https://ipfs.io/ipfs/QmVob6MAQFdMJ5dCyFuWSoEZcKzLFg92h2oQ6v7qQH5jRS?filename=member-platinum.json")
+      await memberCard.connect(user4).setTokenURI(4, "https://ipfs.io/ipfs/QmZVNNuAQ47sGJeiqWUKxC38YTwEQ5g618YHeu8URrmdeW?filename=member-diamond.json")
+
+      const uri1 = await memberCard.connect(user1).getTokenURI(1);
+      console.log('uri1 :>> ', uri1);
+    })
+
+    // it("Get TokenURI", async () => {
+    //   const uri1 = await memberCard.connect(user1).getTokenURI(1);
+    //   console.log('uri1 :>> ', uri1);
+    // })
 
   });
 

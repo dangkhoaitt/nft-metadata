@@ -34,7 +34,7 @@ describe("DungeonsAndDragonsCharacter", () => {
     //   await tokenTest.transfer(dnd.address, payment);
     });
 
-    describe("using randomness chainlink create characters", () => {
+    describe("create characters", () => {
         // it.only("create not fund LINK token", async () => {
         //     // console.log("Creating requests on contract: ", dnd.address);
         //     await dnd.connect(user1).requestNewRandomCharacter(123);

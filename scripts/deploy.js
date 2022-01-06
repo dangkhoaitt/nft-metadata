@@ -1,22 +1,19 @@
 const { ethers } = require("hardhat");
 const fs = require("fs");
+const { memberCardTemplate } = require("../metadata/template/MemberCardTemplate");
 require('dotenv').config();
-const { metadataTemplate } = require("./metadataTemplate");
 const THREE_MONTHS = 7776000; // seconds
+const FEE = "50000000000000000";
 const env = process.env;
 
 async function main() {
   //Loading accounts
   const accounts = await ethers.getSigners();
-  const addresses = accounts.map((item) => item.address);
-
+  const addresses = accounts.map((item) => item.address.toString());
+  
   // Loading contract factory.
-  const DungeonsAndDragonsCharacter = await ethers.getContractFactory("DungeonsAndDragonsCharacter");
-
-  const payment = env.TRUFFLE_CL_BOX_PAYMENT || "3000000000000000000"
-
   // const TokenTest  = await ethers.getContractFactory("TokenTest");
-  // const MemberCard = await ethers.getContractFactory("MemberCard");
+  const MemberCard = await ethers.getContractFactory("MemberCard");
   // const Staking    = await ethers.getContractFactory("Staking");
   // const Vendor     = await ethers.getContractFactory("Vendor");
 
@@ -25,84 +22,46 @@ async function main() {
   console.log('VERIFY ADDRESS');
   console.log('==================================================================');
   
-  const dnd = await DungeonsAndDragonsCharacter.deploy(
-    env.RINKEBY_VRF_COORDINATOR,
-    env.RINKEBY_LINKTOKEN,
-    env.RINKEBY_KEYHASH
-  );
-
-  // const dnd = DungeonsAndDragonsCharacter.deploy(
-  //   env.MUMBAI_VRF_COORDINATOR,
-  //   env.MUMBAI_LINKTOKEN,
-  //   env.MUMBAI_KEYHASH
-  // );
-
-  await dnd.deployed();
-
-  // Nạp LINK cho chainlink
-  const tokenAddress = await dnd.LinkToken();
-  const token = await ethers.getContractAt("LinkTokenInterface",tokenAddress);
-  console.log("Chainlink Token address: ", tokenAddress);
-  // const token = await LinkTokenInterface.at(tokenAddress); // using with truffle
-  console.log("Funding contract: ", dnd.address);
-  await token.transfer(dnd.address, payment);
-
-  // tạo các character 
-  console.log("Creating requests on contract: ", dnd.address);
-  const tx  = await dnd.requestNewRandomCharacter("The Chainlink Knight");
-  const tx2 = await dnd.requestNewRandomCharacter("The Chainlink Elf");
-  const tx3 = await dnd.requestNewRandomCharacter("The Chainlink Wizard");
-  const tx4 = await dnd.requestNewRandomCharacter("The Chainlink Orc");
+  const memberCard = await MemberCard.deploy("Member Card NFT", "MCN", 3, THREE_MONTHS);
+  await memberCard.deployed();
+  console.log("MemberCard  deployed to ==> ", memberCard.address);
 
   // get ra các character
-  console.log('Let\'s get the overview of your character');
-  const overview = await dnd.characters(0);
-  console.log(overview);
+  // console.log('Let\'s get the overview of your character');
+  // const overview = await dnd.characters(0);
+  // console.log(overview);
+
+  // Mint token
+  await memberCard.mintToken(addresses[0], { value: FEE });
 
   // Tạo metadata
-  // const length = await dnd.getNumberOfCharacters();
+  // const memberCardLength = (await memberCard.getNumberOfMemberCards()).toString();
   // let index = 0;
-  // while (index < length) {
-  //   console.log('Let\'s get the overview of your character ' + index + ' of ' + length);
-  //   let characterMetadata = metadataTemplate;
-  //   let characterOverview = await dnd.characters(index);
+  // while (index < memberCardLength) {
+  //   console.log('Let\'s get the overview of your MemberCard ' + index + ' of ' + memberCardLength);
+  //   let memberCardMetadata = memberCardTemplate;
+  //   let memberCardOverview = await memberCard.memberCards(index);
   //   index += 1;
-  //   characterMetadata['name'] = characterOverview['name'];
-  //   if (fs.existsSync('metadata/' + characterMetadata['name'].toLowerCase().replace(/\s/g, '-') + '.json')) {
+  //   memberCardMetadata['name'] = memberCardOverview;
+  //   if (fs.existsSync('metadata/' + memberCardMetadata['name'].toLowerCase().replace(/\s/g, '-') + '.json')) {
   //     console.log('test')
   //     continue
   //   }
-  //   console.log(characterMetadata['name'])
-  //   characterMetadata['attributes'][0]['value'] = characterOverview['strength']['words'][0]
-  //   characterMetadata['attributes'][1]['value'] = characterOverview['dexterity']['words'][0]
-  //   characterMetadata['attributes'][2]['value'] = characterOverview['constitution']['words'][0]
-  //   characterMetadata['attributes'][3]['value'] = characterOverview['intelligence']['words'][0]
-  //   characterMetadata['attributes'][4]['value'] = characterOverview['wisdom']['words'][0]
-  //   characterMetadata['attributes'][5]['value'] = characterOverview['charisma']['words'][0]
-    
+  //   console.log(memberCardMetadata['name'])
   //   filename = 'metadata/' + characterMetadata['name'].toLowerCase().replace(/\s/g, '-')
   //   let data = JSON.stringify(characterMetadata)
   //   fs.writeFileSync(filename + '.json', data)
-
-  // set tokenUri
-  // const TOKENID = 0;
-  // console.log('Let\'s set the tokenURI of your character')
-  // const tx  = await dnd.setTokenURI(0, "")
-  // console.log('tx :>> ', tx);
-  // const tx1 = await dnd.setTokenURI(1, "")
-  // console.log('tx1 :>> ', tx1);
-  // const tx2 = await dnd.setTokenURI(2, "")
-  // console.log('tx2 :>> ', tx2);
-  // const tx3 = await dnd.setTokenURI(3, "")
-  // console.log('tx3 :>> ', tx3);
-  }
-
+  // }
+  // 0x0B592f7bb85E4f516019eeeb372414Ca16F83535
+  // 0xdE20a2B89387EB22364FaEAeA3774CB4B5F0a00c
   
-
-  // const memberCard = await MemberCard.deploy("Member Card NFT", "MCN", 3, THREE_MONTHS);
-  // await memberCard.deployed();
-  // console.log("MemberCard deployed to:", memberCard.address);
-  // const deployedMemberCard = await memberCard.deployTransaction.wait();
+  // set tokenUri
+  console.log('Let\'s set the tokenURI of your MemberCard')
+  // const tx  = await memberCard.setTokenURI(0, "https://ipfs.io/ipfs/QmTxYCTADGbWBw1oByLC4aDpQoKS6zDtSq2WmoLkCeRZtb?filename=member-kv3d.json")
+  // const tx1 = await memberCard.setTokenURI(1, "https://ipfs.io/ipfs/QmXd61Wuj4mhNKHtdKgseZkcTzaTSSbBxYN5F7aaFEpCqx?filename=member-sliver.json")
+  // const tx2 = await memberCard.setTokenURI(2, "https://ipfs.io/ipfs/QmVob6MAQFdMJ5dCyFuWSoEZcKzLFg92h2oQ6v7qQH5jRS?filename=member-platinum.json")
+  // const tx3 = await memberCard.setTokenURI(3, "https://ipfs.io/ipfs/QmZVNNuAQ47sGJeiqWUKxC38YTwEQ5g618YHeu8URrmdeW?filename=member-diamond.json")
+  }
 
   // const vendor = await Vendor.deploy(deployedMemberCard.contractAddress);
   // await vendor.deployed();
